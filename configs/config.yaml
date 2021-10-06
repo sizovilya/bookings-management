@@ -1,0 +1,10 @@
+dealership:
+  # open time(hh:mm)
+  openTime: 09:00
+  # close time(hh:mm)
+  closeTime: 17:00
+  # number of bookings can be executed at the same time
+  capacity: 2
+booking:
+  # duration of one booking, hours
+  duration: 2

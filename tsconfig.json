@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "strict": true,
+    "strictFunctionTypes": false,
+    "esModuleInterop": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true
+  }
+}
