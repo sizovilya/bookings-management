@@ -92,3 +92,14 @@ query getBookingsByVin {
   }
 }
 ```
+
+### Project structure(most important things)
+```shell
+
+├── domain // main entities(splitted by DDD)
+├── lib
+│   ├── db // simple in-memory db based on array :)
+├── repositories // code to work with db
+├── services // place for business logic
+
+```
