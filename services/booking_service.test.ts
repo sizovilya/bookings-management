@@ -55,7 +55,7 @@ describe('create booking: validation', () => {
     const vehicle: Vehicle = {
       make: '',
       model: '',
-      VIN: '4s3...',
+      vin: '4s3...',
     };
     const booking: Booking = {
       customer,
@@ -74,7 +74,7 @@ describe('create booking: validation', () => {
     const vehicle: Vehicle = {
       make: '',
       model: '',
-      VIN: '4s3...',
+      vin: '4s3...',
     };
     const booking: Booking = {
       customer,
@@ -94,7 +94,7 @@ describe('create booking: validation', () => {
     const vehicle: Vehicle = {
       make: 'Volvo',
       model: 'XC 60',
-      VIN: '11111111111111111',
+      vin: '11111111111111111',
     };
     const booking: Booking = {
       customer,
@@ -116,7 +116,7 @@ describe('create booking: creating', () => {
     const vehicle: Vehicle = {
       make: 'Volvo',
       model: 'XC 90',
-      VIN: '11111111111111111',
+      vin: '11111111111111111',
     };
     const booking: Booking = {
       customer,
@@ -144,7 +144,7 @@ describe('create booking: creating', () => {
     const vehicle: Vehicle = {
       make: 'Volvo',
       model: 'XC 90',
-      VIN: '11111111111111111',
+      vin: '11111111111111111',
     };
     const booking: Booking = {
       customer,
@@ -185,7 +185,7 @@ describe('get bookings test', () => {
     const vehicle: Vehicle = {
       make: 'Volvo',
       model: 'XC 90',
-      VIN: '11111111111111111',
+      vin: '11111111111111111',
     };
     const booking: Booking = {
       customer,
@@ -220,7 +220,7 @@ describe('get bookings test', () => {
     const vehicle: Vehicle = {
       make: 'Volvo',
       model: 'XC 90',
-      VIN: vin,
+      vin: vin,
     };
     const booking: Booking = {
       customer,
@@ -230,7 +230,7 @@ describe('get bookings test', () => {
     };
 
     const secondBooking = JSON.parse(JSON.stringify(booking));
-    secondBooking.vehicle.VIN = '22222222222222222';
+    secondBooking.vehicle.vin = '22222222222222222';
     secondBooking.date = new Date(new Date().setHours(9, 0, 0, 0));
     secondBooking.endDate = new Date();
 

@@ -1,9 +1,8 @@
-import {
-  buildSchema,
-} from 'graphql';
+import {buildSchema,} from 'graphql';
 import express from 'express';
-import { graphqlHTTP } from 'express-graphql';
+import {graphqlHTTP} from 'express-graphql';
 import Services from '../../services/services';
+import Booking from "../../domain/booking";
 
 class GraphQLServer {
   private services: Services;
@@ -13,15 +12,106 @@ class GraphQLServer {
   }
 
   public async run() {
-    const schema = buildSchema(`
-  type Query {
-    hello: String
-  }
-`);
+    const schema =
+      buildSchema(`
+        type Query {
+          bookingsByDay(date: String!): [Booking]
+          bookingsByVin(vin: String!): [Booking]
+          getCapacity: Capacity
+        },
+        type Mutation {
+          setCapacity(capacity: Int!): Capacity
+          createBooking(booking: BookingInput!): Boolean
+        },
+        type Capacity {
+          capacity: Int!
+        },
+        type Vehicle {
+          make: String!
+          model: String!
+          vin: String!
+        },
+        type Customer {
+          name: String!
+          email: String!
+          phoneNumber: String!
+        },
+        type Booking {
+           customer: Customer!
+           vehicle: Vehicle!
+           date: String!
+           endDate: String!
+         },
+        input VehicleInput {
+          make: String!
+          model: String!
+          vin: String!
+        },
+        input CustomerInput {
+          name: String!
+          email: String!
+          phoneNumber: String!
+        },
+        input BookingInput {
+           customer: CustomerInput!
+           vehicle: VehicleInput!
+           date: String!
+         },
+      `);
 
-    // The root provides a resolver function for each API endpoint
     const root = {
-      hello: () => 'Hello world!',
+      bookingsByDay: (args) => {
+        const date = new Date(args.date)
+        const bookings =  this.services.bookingService.getBookingsByDate(date);
+        return bookings.map((b) => {
+          return {
+            date: b.date.toISOString(),
+            endDate: b.endDate.toISOString(),
+            vehicle: b.vehicle,
+            customer: b.customer,
+          }
+        })
+      },
+      bookingsByVin: (args) => {
+        const bookings = this.services.bookingService.getBookingsByVIN(args.vin);
+        return bookings.map((b) => {
+          return {
+            date: b.date.toISOString(),
+            endDate: b.endDate.toISOString(),
+            vehicle: b.vehicle,
+            customer: b.customer,
+          }
+        })
+      },
+      getCapacity: () => {
+        return {
+          capacity: this.services.bookingService.getCapacity()
+        }
+      },
+      createBooking: (args) => {
+        const booking: Booking = {
+          date: new Date(args.booking.date),
+          vehicle: {
+            make: args.booking.vehicle.make,
+            model: args.booking.vehicle.model,
+            vin: args.booking.vehicle.vin,
+          },
+          customer: {
+            name: args.booking.customer.name,
+            email: args.booking.customer.email,
+            phoneNumber: args.booking.customer.phoneNumber,
+          },
+          endDate: new Date(),
+        }
+        this.services.bookingService.create(booking)
+        return true
+      },
+      setCapacity: (args) => {
+        this.services.bookingService.setCapacity(args.capacity)
+        return {
+          capacity: this.services.bookingService.getCapacity()
+        }
+      },
     };
 
     const app = express();
