@@ -1,11 +1,9 @@
 # bookings-management
 
 ### How to run
-``
-npm i
-``  
-``npm start`` to run project  
-``npm run test `` to run tests  
+``npm i``  to install dependencies  
+``npm start``  to run project  
+``npm run test ``  to run tests  
 
 ### How to use
 #### Set dealership capacity:
