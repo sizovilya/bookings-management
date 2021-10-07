@@ -24,7 +24,7 @@ class BookingRepository {
     const bm: BookingModel = {
       make: booking.vehicle.make,
       model: booking.vehicle.model,
-      vin: booking.vehicle.VIN,
+      vin: booking.vehicle.vin,
       name: booking.customer.name,
       email: booking.customer.email,
       phone_number: booking.customer.phoneNumber,
@@ -54,7 +54,7 @@ class BookingRepository {
         vehicle: {
           make: i.make,
           model: i.model,
-          VIN: i.vin,
+          vin: i.vin,
         },
       };
       return b;
@@ -78,7 +78,7 @@ class BookingRepository {
         vehicle: {
           make: i.make,
           model: i.model,
-          VIN: i.vin,
+          vin: i.vin,
         },
       };
       return b;
@@ -102,7 +102,7 @@ class BookingRepository {
         vehicle: {
           make: i.make,
           model: i.model,
-          VIN: i.vin,
+          vin: i.vin,
         },
       };
       return b;

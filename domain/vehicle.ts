@@ -1,7 +1,7 @@
 type Vehicle = {
   make: string
   model: string
-  VIN: string
+  vin: string
 }
 
 export default Vehicle;

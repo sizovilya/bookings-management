@@ -103,6 +103,7 @@ class BookingService {
   }
 
   public setCapacity(capacity: number): void {
+    this.logger.info('set capacity: %d', capacity);
     if (capacity < 1) {
       throw new Error('Capacity should be >= 1');
     }
