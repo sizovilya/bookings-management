@@ -1,4 +1,5 @@
 import pino from 'pino';
+import { DateTime } from 'luxon';
 import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import Database from '../lib/db';
@@ -60,8 +61,8 @@ describe('create booking: validation', () => {
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(),
-      endDate: new Date(),
+      date: DateTime.now(),
+      endDate: DateTime.now(),
     };
     expect(() => services.bookingService.create(booking)).toThrow(Error);
   });
@@ -79,8 +80,8 @@ describe('create booking: validation', () => {
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(),
-      endDate: new Date(),
+      date: DateTime.now().toUTC().toUTC(),
+      endDate: DateTime.now().toUTC(),
     };
     expect(() => services.bookingService.create(booking)).toThrow(Error);
   });
@@ -99,8 +100,8 @@ describe('create booking: validation', () => {
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(new Date().setHours(18, 0)),
-      endDate: new Date(),
+      date: DateTime.now().toUTC().set({ hour: 18 }),
+      endDate: DateTime.now().toUTC(),
     };
     expect(() => services.bookingService.create(booking)).toThrow('Booking is outside of working hours');
   });
@@ -121,15 +122,21 @@ describe('create booking: creating', () => {
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(new Date().setHours(9, 0, 0, 0)),
-      endDate: new Date(),
+      date: DateTime.fromObject({
+        hour: 9, minute: 0, second: 0, millisecond: 0,
+      }, { zone: 'UTC' }),
+      endDate: DateTime.now().toUTC(),
     };
 
     const secondBooking = { ...booking };
-    secondBooking.date = new Date(new Date().setHours(12, 30, 0, 0));
+    secondBooking.date = DateTime.fromObject({
+      hour: 12, minute: 30, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
 
     const thirdBooking = { ...booking };
-    thirdBooking.date = new Date(new Date().setHours(15, 0, 0, 0));
+    thirdBooking.date = DateTime.fromObject({
+      hour: 15, minute: 0, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
 
     services.bookingService.create(booking);
     services.bookingService.create(secondBooking);
@@ -149,15 +156,21 @@ describe('create booking: creating', () => {
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(new Date().setHours(11, 0, 0, 0)),
-      endDate: new Date(),
+      date: DateTime.fromObject({
+        hour: 11, minute: 0, second: 0, millisecond: 0,
+      }, { zone: 'UTC' }),
+      endDate: DateTime.now().toUTC(),
     };
 
     const secondBooking = { ...booking };
-    secondBooking.date = new Date(new Date().setHours(13, 0, 0, 0));
+    secondBooking.date = DateTime.fromObject({
+      hour: 13, minute: 0, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
 
     const thirdBooking = { ...booking };
-    thirdBooking.date = new Date(new Date().setHours(11, 15, 0, 0));
+    thirdBooking.date = DateTime.fromObject({
+      hour: 11, minute: 15, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
 
     services.bookingService.create(booking);
     services.bookingService.create(secondBooking);
@@ -190,25 +203,33 @@ describe('get bookings test', () => {
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(new Date().setHours(9, 0, 0, 0)),
-      endDate: new Date(),
+      date: DateTime.fromObject({
+        hour: 9, minute: 0, second: 0, millisecond: 0,
+      }, { zone: 'UTC' }),
+      endDate: DateTime.now().toUTC(),
     };
 
     const secondBooking = { ...booking };
-    secondBooking.date = new Date(new Date().setHours(12, 30, 0, 0));
+    secondBooking.date = DateTime.fromObject({
+      hour: 12, minute: 30, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
 
     const thirdBooking = { ...booking };
-    thirdBooking.date = new Date(new Date().setHours(15, 0, 0, 0));
+    thirdBooking.date = DateTime.fromObject({
+      hour: 15, minute: 0, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
 
     const fourthBooking = { ...booking };
-    const yesterday = new Date(new Date().setDate(new Date().getDate() - 1)).setHours(14);
-    fourthBooking.date = new Date(yesterday);
+    const yesterday = DateTime.fromObject({
+      hour: 15, minute: 0, second: 0, millisecond: 0,
+    }, { zone: 'UTC' }).minus({ days: 1 });
+    fourthBooking.date = yesterday;
 
     services.bookingService.create(booking);
     services.bookingService.create(secondBooking);
     services.bookingService.create(thirdBooking);
     services.bookingService.create(fourthBooking);
-    expect(services.bookingService.getBookingsByDate(new Date())).toHaveLength(3);
+    expect(services.bookingService.getBookingsByDate(DateTime.now().toUTC())).toHaveLength(3);
   });
   test('create several bookings and get by vin', () => {
     const vin = '11111111111111111';
@@ -220,19 +241,23 @@ describe('get bookings test', () => {
     const vehicle: Vehicle = {
       make: 'Volvo',
       model: 'XC 90',
-      vin: vin,
+      vin,
     };
     const booking: Booking = {
       customer,
       vehicle,
-      date: new Date(new Date().setHours(9, 0, 0, 0)),
-      endDate: new Date(),
+      date: DateTime.fromObject({
+        hour: 9, minute: 0, second: 0, millisecond: 0,
+      }, { zone: 'UTC' }),
+      endDate: DateTime.now().toUTC(),
     };
 
     const secondBooking = JSON.parse(JSON.stringify(booking));
     secondBooking.vehicle.vin = '22222222222222222';
-    secondBooking.date = new Date(new Date().setHours(9, 0, 0, 0));
-    secondBooking.endDate = new Date();
+    secondBooking.date = DateTime.fromObject({
+      hour: 9, minute: 0, second: 0, millisecond: 0,
+    }, { zone: 'UTC' });
+    secondBooking.endDate = DateTime.now().toUTC();
 
     services.bookingService.create(booking);
     services.bookingService.create(secondBooking);
