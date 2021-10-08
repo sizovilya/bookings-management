@@ -3,7 +3,8 @@
 ### How to run
 ``npm i``  to install dependencies  
 ``npm start``  to run project  
-``npm run test ``  to run tests
+``npm run test ``  to run tests  
+``npm run build ``  to build production ready bundle :)
 
 ### How to use
 #### Set dealership capacity:

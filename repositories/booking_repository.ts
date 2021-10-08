@@ -1,4 +1,5 @@
 /* eslint-disable camelcase */
+import { DateTime } from 'luxon';
 import Database from '../lib/db';
 import Booking from '../domain/booking';
 
@@ -9,8 +10,8 @@ type BookingModel = {
   name: string
   email: string
   phone_number: string
-  start_date: Date
-  end_date: Date
+  start_date: DateTime
+  end_date: DateTime
 }
 
 class BookingRepository {
@@ -34,7 +35,7 @@ class BookingRepository {
     this.db.arr.push(bm);
   }
 
-  public getBookingIntersections(startDate: Date, endDate: Date): Array<Booking> {
+  public getBookingIntersections(startDate: DateTime, endDate: DateTime): Array<Booking> {
     const bms = this.db
       .arr
       .filter(
@@ -61,7 +62,7 @@ class BookingRepository {
     });
   }
 
-  public getBookingsByDate(startDate: Date, endDate: Date): Array<Booking> {
+  public getBookingsByDate(startDate: DateTime, endDate: DateTime): Array<Booking> {
     const bms = this.db
       .arr
       .filter((b) => b.start_date >= startDate && b.end_date <= endDate);

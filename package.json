@@ -21,6 +21,7 @@
   "homepage": "https://github.com/sizovilya/bookings-management#readme",
   "devDependencies": {
     "@types/jest": "^27.0.2",
+    "@types/luxon": "^2.0.5",
     "@types/node": "^16.10.2",
     "@types/pino": "^6.3.11",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
@@ -28,6 +29,7 @@
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-plugin-import": "^2.24.2",
+    "eslint-plugin-no-use-extend-native": "^0.5.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
     "jest": "^27.2.4",
@@ -41,6 +43,7 @@
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",
     "graphql": "^15.6.0",
+    "luxon": "^2.0.2",
     "pino": "^6.13.3",
     "yaml": "^1.10.2"
   }

@@ -1,8 +1,9 @@
-import {buildSchema,} from 'graphql';
+import { buildSchema } from 'graphql';
+import { DateTime } from 'luxon';
 import express from 'express';
-import {graphqlHTTP} from 'express-graphql';
+import { graphqlHTTP } from 'express-graphql';
 import Services from '../../services/services';
-import Booking from "../../domain/booking";
+import Booking from '../../domain/booking';
 
 class GraphQLServer {
   private services: Services;
@@ -12,8 +13,7 @@ class GraphQLServer {
   }
 
   public async run() {
-    const schema =
-      buildSchema(`
+    const schema = buildSchema(`
         type Query {
           bookingsByDay(date: String!): [Booking]
           bookingsByVin(vin: String!): [Booking]
@@ -61,36 +61,31 @@ class GraphQLServer {
 
     const root = {
       bookingsByDay: (args) => {
-        const date = new Date(args.date)
-        const bookings =  this.services.bookingService.getBookingsByDate(date);
-        return bookings.map((b) => {
-          return {
-            date: b.date.toISOString(),
-            endDate: b.endDate.toISOString(),
-            vehicle: b.vehicle,
-            customer: b.customer,
-          }
-        })
+        const date = DateTime.fromISO(args.date, { zone: 'UTC' });
+        const bookings = this.services.bookingService.getBookingsByDate(date);
+        return bookings.map((b) => ({
+          date: b.date.toJSDate().toISOString(),
+          endDate: b.endDate.toJSDate().toISOString(),
+          vehicle: b.vehicle,
+          customer: b.customer,
+        }));
       },
       bookingsByVin: (args) => {
         const bookings = this.services.bookingService.getBookingsByVIN(args.vin);
-        return bookings.map((b) => {
-          return {
-            date: b.date.toISOString(),
-            endDate: b.endDate.toISOString(),
-            vehicle: b.vehicle,
-            customer: b.customer,
-          }
-        })
+        return bookings.map((b) => ({
+          date: b.date.toJSDate().toISOString(),
+          endDate: b.endDate.toJSDate().toISOString(),
+          vehicle: b.vehicle,
+          customer: b.customer,
+        }));
       },
-      getCapacity: () => {
-        return {
-          capacity: this.services.bookingService.getCapacity()
-        }
-      },
+      getCapacity: () => ({
+        capacity: this.services.bookingService.getCapacity(),
+      }),
       createBooking: (args) => {
+        const date = DateTime.fromISO(args.booking.date, { zone: 'UTC' });
         const booking: Booking = {
-          date: new Date(args.booking.date),
+          date,
           vehicle: {
             make: args.booking.vehicle.make,
             model: args.booking.vehicle.model,
@@ -101,16 +96,16 @@ class GraphQLServer {
             email: args.booking.customer.email,
             phoneNumber: args.booking.customer.phoneNumber,
           },
-          endDate: new Date(),
-        }
-        this.services.bookingService.create(booking)
-        return true
+          endDate: DateTime.now().toUTC(),
+        };
+        this.services.bookingService.create(booking);
+        return true;
       },
       setCapacity: (args) => {
-        this.services.bookingService.setCapacity(args.capacity)
+        this.services.bookingService.setCapacity(args.capacity);
         return {
-          capacity: this.services.bookingService.getCapacity()
-        }
+          capacity: this.services.bookingService.getCapacity(),
+        };
       },
     };
 

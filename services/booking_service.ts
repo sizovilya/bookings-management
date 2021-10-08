@@ -1,6 +1,8 @@
+/* eslint-disable no-param-reassign */
 import pino from 'pino';
-import {JTDDataType} from 'ajv/dist/jtd';
-import Ajv, {ValidateFunction} from 'ajv';
+import { JTDDataType } from 'ajv/dist/jtd';
+import Ajv, { ValidateFunction } from 'ajv';
+import { DateTime } from 'luxon';
 import Repositories from '../repositories/repositories';
 import Booking from '../domain/booking';
 
@@ -84,10 +86,14 @@ class BookingService {
     }
 
     const { date } = booking;
-    const endDate = new Date(new Date(booking.date).setHours(booking.date.getHours() + this.duration));
+    const endDate = DateTime.fromObject(date.toObject(), { zone: 'UTC' }).plus({ hours: this.duration });
 
-    const dealershipOpenDate = new Date(new Date(booking.date).setHours(this.openHour, this.openMinute, 0, 0));
-    const dealershipCloseDate = new Date(new Date(booking.date).setHours(this.closeHour, this.closeMinute, 0, 0));
+    const dealershipOpenDate = DateTime.fromObject(date.toObject(), { zone: 'UTC' }).set({
+      hour: this.openHour, minute: this.openMinute, second: 0, millisecond: 0,
+    });
+    const dealershipCloseDate = DateTime.fromObject(date.toObject(), { zone: 'UTC' }).set({
+      hour: this.closeHour, minute: this.closeMinute, second: 0, millisecond: 0,
+    });
     if (date < dealershipOpenDate || endDate > dealershipCloseDate) {
       throw new Error('Booking is outside of working hours');
     }
@@ -115,9 +121,13 @@ class BookingService {
     return this.repositories.booking.getCapacity();
   }
 
-  public getBookingsByDate(date: Date): Array<Booking> {
-    const startDate = new Date(new Date(date).setHours(this.openHour, this.openMinute, 0, 0));
-    const endDate = new Date(new Date(date).setHours(this.closeHour, this.closeMinute, 0, 0));
+  public getBookingsByDate(date: DateTime): Array<Booking> {
+    const startDate = DateTime.fromObject(date.toObject(), { zone: 'UTC' }).set({
+      hour: this.openHour, minute: this.openMinute, second: 0, millisecond: 0,
+    });
+    const endDate = DateTime.fromObject(date.toObject(), { zone: 'UTC' }).set({
+      hour: this.closeHour, minute: this.closeMinute, second: 0, millisecond: 0,
+    });
     return this.repositories.booking.getBookingsByDate(startDate, endDate);
   }
 
