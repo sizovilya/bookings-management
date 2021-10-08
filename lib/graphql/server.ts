@@ -96,7 +96,7 @@ class GraphQLServer {
             email: args.booking.customer.email,
             phoneNumber: args.booking.customer.phoneNumber,
           },
-          endDate: DateTime.now().toUTC(),
+          endDate: DateTime.now().toUTC(), // has no effect here (just to save time a bit)
         };
         this.services.bookingService.create(booking);
         return true;
